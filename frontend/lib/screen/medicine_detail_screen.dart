@@ -18,25 +18,56 @@ class MedicineDetailScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Description:',
+              'Nama Obat:',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
-            Text(medicine.description),
+            TextFormField(
+              initialValue: medicine.name,
+              readOnly: true,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'Deskripsi:',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            TextFormField(
+              initialValue: medicine.description,
+              readOnly: true,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+              ),
+            ),
             const SizedBox(height: 16),
             const Text(
               'Manufacturer:',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
-            Text(medicine.manufacturer),
+            TextFormField(
+              initialValue: medicine.manufacturer,
+              readOnly: true,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+              ),
+            ),
             const SizedBox(height: 16),
             const Text(
-              'Expiry Date:',
+              'Tanggal Kedaluwarsa:',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
-            Text('${medicine.expiryDate.day}/${medicine.expiryDate.month}/${medicine.expiryDate.year}'),
+            TextFormField(
+              initialValue: '${medicine.expiryDate.day}/${medicine.expiryDate.month}/${medicine.expiryDate.year}',
+              readOnly: true,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+              ),
+            ),
           ],
         ),
       ),

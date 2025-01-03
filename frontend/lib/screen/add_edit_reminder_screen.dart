@@ -57,6 +57,7 @@ class _AddEditReminderScreenState extends State<AddEditReminderScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Medicine Dropdown
               FutureBuilder<List<Medicine>>(
                 future: _medicines,
                 builder: (context, snapshot) {
@@ -72,6 +73,7 @@ class _AddEditReminderScreenState extends State<AddEditReminderScreen> {
                       decoration: const InputDecoration(
                         labelText: 'Select Medicine',
                         border: OutlineInputBorder(),
+                        contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                       ),
                       items: snapshot.data!.map((medicine) {
                         return DropdownMenuItem<Medicine>(
@@ -91,32 +93,32 @@ class _AddEditReminderScreenState extends State<AddEditReminderScreen> {
                 },
               ),
               const SizedBox(height: 24),
-              TextFormField(
+              
+              // Reminder Name
+              _buildTextField(
                 controller: _nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Reminder Name',
-                  border: OutlineInputBorder(),
-                ),
+                labelText: 'Reminder Name',
                 validator: (value) =>
                     value?.isEmpty ?? true ? 'Please enter reminder name' : null,
               ),
               const SizedBox(height: 16),
-              TextFormField(
+
+              // Dose
+              _buildTextField(
                 controller: _doseController,
-                decoration: const InputDecoration(
-                  labelText: 'Dose',
-                  border: OutlineInputBorder(),
-                ),
+                labelText: 'Dose',
                 validator: (value) =>
                     value?.isEmpty ?? true ? 'Please enter dose' : null,
               ),
               const SizedBox(height: 24),
-              ListTile(
-                title: const Text('Reminder Date'),
-                subtitle: Text(_reminderDate != null
+
+              // Reminder Date
+              _buildDateTimeTile(
+                title: 'Reminder Date',
+                value: _reminderDate != null
                     ? '${_reminderDate!.day}/${_reminderDate!.month}/${_reminderDate!.year}'
-                    : 'Set date'),
-                trailing: const Icon(Icons.calendar_today),
+                    : 'Set date',
+                icon: Icons.calendar_today,
                 onTap: () async {
                   final date = await showDatePicker(
                     context: context,
@@ -130,12 +132,14 @@ class _AddEditReminderScreenState extends State<AddEditReminderScreen> {
                 },
               ),
               const SizedBox(height: 24),
-              ListTile(
-                title: const Text('Reminder Time'),
-                subtitle: Text(_reminderTime != null
+
+              // Reminder Time
+              _buildDateTimeTile(
+                title: 'Reminder Time',
+                value: _reminderTime != null
                     ? '${_reminderTime!.hour}:${_reminderTime!.minute.toString().padLeft(2, '0')}'
-                    : 'Set time'),
-                trailing: const Icon(Icons.access_time),
+                    : 'Set time',
+                icon: Icons.access_time,
                 onTap: () async {
                   final time = await showTimePicker(
                     context: context,
@@ -147,72 +151,115 @@ class _AddEditReminderScreenState extends State<AddEditReminderScreen> {
                 },
               ),
               const SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _isLoading
-                      ? null
-                      : () async {
-                          if (_reminderDate == null || _reminderTime == null) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Please set a reminder date and time'),
-                              ),
-                            );
-                            return;
-                          }
 
-                          if (_formKey.currentState!.validate()) {
-                            setState(() => _isLoading = true);
-                            try {
-                              final reminder = Reminder(
-                                id: widget.reminder?.id ?? 0,
-                                userId: widget.reminder?.userId ?? 0,
-                                medicineId: _selectedMedicine?.id ?? widget.reminder?.medicineId ?? 0,
-                                name: _nameController.text,
-                                dose: _doseController.text,
-                                time: DateTime(
-                                  _reminderDate!.year,
-                                  _reminderDate!.month,
-                                  _reminderDate!.day,
-                                  _reminderTime!.hour,
-                                  _reminderTime!.minute,
-                                ),
-                                createdAt: widget.reminder?.createdAt,
-                                updatedAt: DateTime.now(),
-                              );
-
-                              if (widget.reminder != null) {
-                                await ReminderService().updateReminder(
-                                  widget.reminder!.id,
-                                  reminder,
-                                );
-                              } else {
-                                await ReminderService().addReminder(reminder);
-                              }
-
-                              Navigator.pop(context, true);
-                            } catch (e) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text(e.toString())),
-                              );
-                            } finally {
-                              setState(() => _isLoading = false);
-                            }
-                          }
-                        },
-                  child: _isLoading
-                      ? const CircularProgressIndicator()
-                      : Text(
-                          widget.reminder == null
-                              ? 'Add Reminder'
-                              : 'Save Changes',
-                        ),
-                ),
-              ),
+              // Submit Button
+              _buildSubmitButton(),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String labelText,
+    String? Function(String?)? validator,
+  }) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: labelText,
+        border: OutlineInputBorder(),
+        contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+      ),
+      validator: validator,
+    );
+  }
+
+  Widget _buildDateTimeTile({
+    required String title,
+    required String value,
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
+    return ListTile(
+      title: Text(title),
+      subtitle: Text(value),
+      trailing: Icon(icon),
+      onTap: onTap,
+    );
+  }
+
+  Widget _buildSubmitButton() {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: _isLoading
+            ? null
+            : () async {
+                if (_reminderDate == null || _reminderTime == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Please set a reminder date and time'),
+                    ),
+                  );
+                  return;
+                }
+
+                if (_formKey.currentState!.validate()) {
+                  setState(() => _isLoading = true);
+                  try {
+                    final reminder = Reminder(
+                      id: widget.reminder?.id ?? 0,
+                      medicineId: _selectedMedicine?.id ?? widget.reminder?.medicineId ?? 0,
+                      name: _nameController.text,
+                      dose: _doseController.text,
+                      time: DateTime(
+                        _reminderDate!.year,
+                        _reminderDate!.month,
+                        _reminderDate!.day,
+                        _reminderTime!.hour,
+                        _reminderTime!.minute,
+                      ),
+                      createdAt: widget.reminder?.createdAt,
+                      updatedAt: DateTime.now(),
+                    );
+
+                    if (widget.reminder != null) {
+                      await ReminderService().updateReminder(
+                        widget.reminder!.id,
+                        reminder,
+                      );
+                    } else {
+                      await ReminderService().addReminder(reminder);
+                    }
+
+                    Navigator.pop(context, true);
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(e.toString())),
+                    );
+                  } finally {
+                    setState(() => _isLoading = false);
+                  }
+                }
+              },
+              style: ElevatedButton.styleFrom(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          backgroundColor: Colors.teal, // Consistent color theme
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+        ),
+        child: _isLoading
+            ? const CircularProgressIndicator(color: Colors.white)
+            : Text(
+                widget.reminder == null
+                    ? 'Add Reminder'
+                    : 'Save Changes',
+                style: const TextStyle(fontSize: 16),
+              ),
       ),
     );
   }

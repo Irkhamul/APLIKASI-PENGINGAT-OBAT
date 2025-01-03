@@ -7,7 +7,6 @@ class RemindersController extends Controller {
   Future<Response> create(Request request) async {
     // Validasi input
     request.validate({
-      'user_id': 'required|numeric',
       'medicine_id': 'required|numeric',
       'name': 'required|string|max_length:50',
       'dose': 'required|string|max_length:50',
@@ -41,7 +40,6 @@ class RemindersController extends Controller {
   Future<Response> update(Request request, int id) async {
     // Validasi input
     request.validate({
-      'user_id': 'required|numeric',
       'medicine_id': 'required|numeric',
       'name': 'required|string|max_length:50',
       'dose': 'required|string|max_length:50',
@@ -60,7 +58,6 @@ class RemindersController extends Controller {
 
     // Update data pengingat
     await Reminders().query().where('id', '=', id).update({
-      'user_id': reminderData['user_id'],
       'medicine_id': reminderData['medicine_id'],
       'name': reminderData['name'],
       'dose': reminderData['dose'],

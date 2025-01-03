@@ -18,16 +18,16 @@ void main(List<String> args) async {
 
 class Migrate {
   registry() async {
-		 await CreateUserTable().up();
+		//  await CreateUserTable().up();
 		 await CreateRemindersTable().up();
-		 await CreateMedicineTable().up();
-		 await CreatePersonalAccessTokensTable().up();
+		//  await CreateMedicineTable().up();
+		//  await CreatePersonalAccessTokensTable().up();
 	}
 
   dropTables() async {
-		 await CreatePersonalAccessTokensTable().down();
-		  await CreateMedicineTable().down();
+		//  await CreatePersonalAccessTokensTable().down();
+		  // await CreateMedicineTable().down();
 		 await CreateRemindersTable().down();
-		 await CreateUserTable().down();
+		//  await CreateUserTable().down();
 	 }
 }

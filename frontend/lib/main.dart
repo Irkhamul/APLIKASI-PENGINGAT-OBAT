@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/screen/splash_screen.dart';
 import 'package:frontend/screen/login_screen.dart';
 import 'package:frontend/screen/register_screen.dart';
 import 'package:frontend/screen/home_screen.dart';
@@ -25,24 +26,40 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(
           seedColor: Colors.deepPurple,
           brightness: Brightness.light,
+          primary: Colors.deepPurple,
+          secondary: Colors.deepPurple.shade300,
+          tertiary: Colors.deepPurple.shade100,
         ),
         useMaterial3: true,
-        // Tambahkan gaya teks yang konsisten
+        // Memperbarui gaya teks
         textTheme: const TextTheme(
           headlineLarge: TextStyle(
             fontSize: 32,
             fontWeight: FontWeight.bold,
+            letterSpacing: 0.5,
           ),
           headlineMedium: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.w600,
+            letterSpacing: 0.25,
           ),
           titleLarge: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w500,
+            letterSpacing: 0.15,
+          ),
+          bodyLarge: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.normal,
+            letterSpacing: 0.15,
+          ),
+          bodyMedium: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.normal,
+            letterSpacing: 0.25,
           ),
         ),
-        // Sesuaikan dekorasi input
+        // Memperbarui dekorasi input
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
           fillColor: Colors.grey.shade100,
@@ -56,7 +73,7 @@ class MyApp extends StatelessWidget {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: Colors.deepPurple),
+            borderSide: const BorderSide(color: Colors.deepPurple, width: 2),
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
@@ -66,8 +83,10 @@ class MyApp extends StatelessWidget {
             horizontal: 16,
             vertical: 16,
           ),
+          prefixIconColor: Colors.deepPurple,
+          suffixIconColor: Colors.deepPurple,
         ),
-        // Sesuaikan tombol elevasi
+        // Memperbarui tema tombol
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.deepPurple,
@@ -79,20 +98,35 @@ class MyApp extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
+            elevation: 2,
           ),
         ),
-        // Sesuaikan tema kartu
+        // Memperbarui tema kartu
         cardTheme: CardTheme(
-          elevation: 2,
+          elevation: 3,
+          shadowColor: Colors.deepPurple.withOpacity(0.2),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
-          margin: const EdgeInsets.symmetric(vertical: 8),
+          margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+        ),
+        // Menambahkan tema appbar
+        appBarTheme: const AppBarTheme(
+          elevation: 0,
+          centerTitle: true,
+          backgroundColor: Colors.transparent,
+          foregroundColor: Colors.deepPurple,
+          titleTextStyle: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            color: Colors.deepPurple,
+          ),
         ),
       ),
-      // Definisikan rute bernama
-      initialRoute: '/login',
+      
+      initialRoute: '/',
       routes: {
+        '/': (context) => const SplashScreen(),
         '/login': (context) => const LoginScreen(),
         '/register': (context) => const RegisterScreen(),
         '/home': (context) => const HomeScreen(),

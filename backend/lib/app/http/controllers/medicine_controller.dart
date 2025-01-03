@@ -75,7 +75,7 @@ Future<Response> get(Request request,int id) async {
     final medicineData = request.input();
     medicineData['updated_at'] = DateTime.now().toIso8601String();
 
-    // Periksa ID obat
+    
     final medicine = await Medicine().query().where('id', '=', id).first();
 
     if (medicine == null) {

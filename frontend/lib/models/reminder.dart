@@ -1,6 +1,5 @@
 class Reminder {
   final int id;
-  final int userId;
   final int medicineId;
   final String name;
   final String dose;
@@ -10,7 +9,6 @@ class Reminder {
 
   Reminder({
     required this.id,
-    required this.userId,
     required this.medicineId,
     required this.name,
     required this.dose,
@@ -22,7 +20,6 @@ class Reminder {
   factory Reminder.fromJson(Map<String, dynamic> json) {
     return Reminder(
       id: json['id'],
-      userId: json['user_id'],
       medicineId: json['medicine_id'],
       name: json['name'],
       dose: json['dose'],
@@ -37,7 +34,6 @@ class Reminder {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'user_id': userId,
       'medicine_id': medicineId,
       'name': name,
       'dose': dose,

@@ -39,6 +39,7 @@ class _AddEditMedicineScreenState extends State<AddEditMedicineScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.medicine == null ? 'Add Medicine' : 'Edit Medicine'),
+        backgroundColor: Colors.blueAccent,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -47,41 +48,33 @@ class _AddEditMedicineScreenState extends State<AddEditMedicineScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TextFormField(
+              _buildTextField(
                 controller: _nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Medicine Name',
-                  border: OutlineInputBorder(),
-                ),
+                label: 'Medicine Name',
+                icon: Icons.medical_services,
                 validator: (value) =>
                     value?.isEmpty ?? true ? 'Please enter medicine name' : null,
               ),
               const SizedBox(height: 16),
-              TextFormField(
+              _buildTextField(
                 controller: _descriptionController,
-                decoration: const InputDecoration(
-                  labelText: 'Description',
-                  border: OutlineInputBorder(),
-                ),
+                label: 'Description',
+                icon: Icons.description,
                 maxLines: 3,
               ),
               const SizedBox(height: 16),
-              TextFormField(
+              _buildTextField(
                 controller: _manufacturerController,
-                decoration: const InputDecoration(
-                  labelText: 'Manufacturer',
-                  border: OutlineInputBorder(),
-                ),
+                label: 'Manufacturer',
+                icon: Icons.business,
                 validator: (value) =>
                     value?.isEmpty ?? true ? 'Please enter manufacturer' : null,
               ),
               const SizedBox(height: 16),
-              TextFormField(
+              _buildTextField(
                 controller: _expiryDateController,
-                decoration: const InputDecoration(
-                  labelText: 'Expiry Date',
-                  border: OutlineInputBorder(),
-                ),
+                label: 'Expiry Date',
+                icon: Icons.calendar_today,
                 readOnly: true,
                 onTap: () async {
                   final date = await showDatePicker(
@@ -102,52 +95,95 @@ class _AddEditMedicineScreenState extends State<AddEditMedicineScreen> {
                     value?.isEmpty ?? true ? 'Please select expiry date' : null,
               ),
               const SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _isLoading
-                      ? null
-                      : () async {
-                          if (_formKey.currentState!.validate()) {
-                            setState(() => _isLoading = true);
-                            try {
-                              final medicine = Medicine(
-                                id: widget.medicine?.id ?? 0,
-                                name: _nameController.text,
-                                description: _descriptionController.text,
-                                manufacturer: _manufacturerController.text,
-                                expiryDate: _expiryDate!,
-                              );
-
-                              if (widget.medicine != null) {
-                                await MedicineService().updateMedicine(
-                                  widget.medicine!.id,
-                                  medicine,
-                                );
-                              } else {
-                                await MedicineService().addMedicine(medicine);
-                              }
-
-                              Navigator.pop(context, true);
-                            } catch (e) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text(e.toString())),
-                              );
-                            } finally {
-                              setState(() => _isLoading = false);
-                            }
-                          }
-                        },
-                  child: _isLoading
-                      ? const CircularProgressIndicator()
-                      : Text(
-                          widget.medicine == null ? 'Add Medicine' : 'Save Changes',
-                        ),
-                ),
-              ),
+              _buildSubmitButton(),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    bool readOnly = false,
+    int? maxLines,
+    Function()? onTap,
+    String? Function(String?)? validator,
+  }) {
+    return Card(
+      elevation: 5,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: TextFormField(
+        controller: controller,
+        readOnly: readOnly,
+        maxLines: maxLines,
+        onTap: onTap,
+        decoration: InputDecoration(
+          labelText: label,
+          labelStyle: const TextStyle(color: Colors.blueAccent),
+          prefixIcon: Icon(icon, color: Colors.blueAccent),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+        validator: validator,
+      ),
+    );
+  }
+
+  Widget _buildSubmitButton() {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: _isLoading
+            ? null
+            : () async {
+                if (_formKey.currentState!.validate()) {
+                  setState(() => _isLoading = true);
+                  try {
+                    final medicine = Medicine(
+                      id: widget.medicine?.id ?? 0,
+                      name: _nameController.text,
+                      description: _descriptionController.text,
+                      manufacturer: _manufacturerController.text,
+                      expiryDate: _expiryDate!,
+                    );
+
+                    if (widget.medicine != null) {
+                      await MedicineService().updateMedicine(
+                        widget.medicine!.id,
+                        medicine,
+                      );
+                    } else {
+                      await MedicineService().addMedicine(medicine);
+                    }
+
+                    Navigator.pop(context, true);
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(e.toString())),
+                    );
+                  } finally {
+                    setState(() => _isLoading = false);
+                  }
+                }
+              },
+        style: ElevatedButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ), backgroundColor: Colors.blueAccent,
+          padding: const EdgeInsets.symmetric(vertical: 16),
+        ),
+        child: _isLoading
+            ? const CircularProgressIndicator()
+            : Text(
+                widget.medicine == null ? 'Add Medicine' : 'Save Changes',
+                style: const TextStyle(fontSize: 18, color: Colors.white),
+              ),
       ),
     );
   }
